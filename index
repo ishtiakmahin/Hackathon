@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marketplace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Student Marketplace</h1>
+        {% if session.user_id %}
+            <p> <a href="{{ url_for('logout') }}">Logout</a> | <a href="{{ url_for('new_product') }}">Post a Product</a></p>
+        {% else %}
+            <p><a href="{{ url_for('login') }}">Login</a> | <a href="{{ url_for('register') }}">Register</a></p>
+        {% endif %}
+        <div class="search-bar">
+            <form method="GET">
+                <input type="text" name="query" placeholder="Search products..." value="{{ query }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <div class="product-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.title }}">
+                    {% endif %}
+                    <h3><a href="{{ url_for('product_detail', id=product.id) }}">{{ product.title }}</a></h3>
+                    <p>{{ product.description|truncate(100) }}</p>
+                    <p>Price: ${{ product.price }}</p>
+                    <p>Seller: {{ product.seller.username }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
